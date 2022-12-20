@@ -35,7 +35,7 @@ async function toggleDone(req, res, ctx) {
 }
 
 function catchAll(req, res, ctx) {
-  const message = `Endpoint [${req.method}] /${req.params['0']} does not exist`
+  const message = `Endpoint [${req.method}] /${req.params['0']} bulunamadı`
   return res(
     ctx.status(404),
     ctx.json({ message }),

@@ -2,30 +2,30 @@ const { nanoid } = require("nanoid")
 const yup = require('yup')
 
 const schemaCreate = yup.object().shape({
-  name: yup
+  isim: yup
     .string()
     .trim()
-    .required('name of task is required')
-    .max(100, 'name of task must be under 100 chars'),
-  completed: yup
+    .required('görev ismi yazmak zorunludur')
+    .max(100, 'görev ismi 100 karakterden az olmalıdır'),
+  tamamlandi: yup
     .boolean()
-    .typeError('completed must be a boolean')
+    .typeError('tamamlandı boolean olmalıdır')
 })
 
 let todos
 
 const resetTodos = () => {
   todos = [
-    { id: nanoid(5), name: 'laundry', completed: false },
-    { id: nanoid(5), name: 'dishes', completed: false },
-    { id: nanoid(5), name: 'groceries', completed: false },
+    { id: nanoid(5), isim: 'çamaşır', tamamlandi: false },
+    { id: nanoid(5), isim: 'bulaşık', tamamlandi: false },
+    { id: nanoid(5), isim: 'market alışverişi', tamamlandi: false },
   ]
 }
 
 resetTodos()
 
 const getAll = async () => {
-  const message = 'Here are your Todos'
+  const message = 'İşte yapılacaklarınız'
   return [200, { message, data: todos }]
 }
 
@@ -36,13 +36,13 @@ const getById = async id => {
     if (todo) {
       status = 200
       data = todo
-      message = `Here is your Todo ${id}`
+      message = `İşte '${id}' idli yapılacaklarınız `
     } else {
       status = 404
-      message = `Ouch: Todo ${id} not found`
+      message = `Ana: '${id}' bulanamadı len`
     }
   } catch (err) {
-    message = `Ouch: ${err.message}`
+    message = `Ana: ${err.message}`
     status = 422
   }
   return [status, { message, data }]
@@ -52,13 +52,13 @@ const create = async todoFromClient => {
   let message, data, status
   try {
     const validated = await schemaCreate.validate(todoFromClient, { stripUnknown: true })
-    const todo = { id: nanoid(5), completed: false, ...validated }
+    const todo = { id: nanoid(5), tamamlandi: false, ...validated }
     todos.push(todo)
     data = todo
-    message = `Here is your created Todo ${todo.id}`
+    message = `İşte yeni oluşturduğunuz todo ${todo.id}`
     status = 201
   } catch (err) {
-    message = `Ouch: ${err.message}`
+    message = `Ana: ${err.message}`
     status = 422
   }
   return [status, { message, data }]
@@ -70,16 +70,16 @@ const toggleDone = async id => {
   if (todoFromClient) {
     todos = todos.map(todo => {
       if (todo.id == id) {
-        data = { ...todo, completed: !todo.completed }
+        data = { ...todo, tamamlandi: !todo.tamamlandi }
         return data
       }
       return todo
     })
     status = 200
-    message = `Here is your updated Todo ${id}`
+    message = `İşte güncellediğiniz todo ${id}`
   } else {
     status = 404
-    message = `Ouch: Todo ${id} not found`
+    message = `Ana: ${id} li todo bulunamadı len`
   }
   return [status, { message, data }]
 }
